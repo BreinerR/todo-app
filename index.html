@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App | Organiza tu día</title>
+
+    <!-- Fuente externa (Google Fonts) para un look más profesional -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+
+    <!-- Hoja de estilos principal -->
+    <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+
+    <!-- ===================================================== -->
+    <!-- HEADER: título de la app y breve descripción            -->
+    <!-- ===================================================== -->
+    <header class="app-header">
+        <h1 class="app-header__title">
+            <span class="app-header__icon" aria-hidden="true">✓</span>
+            To-Do App
+        </h1>
+        <p class="app-header__subtitle">Organiza tus tareas, un paso a la vez</p>
+    </header>
+
+    <!-- ===================================================== -->
+    <!-- MAIN: contenido principal de la aplicación               -->
+    <!-- ===================================================== -->
+    <main class="app-main">
+
+        <!-- Sección del formulario para agregar tareas -->
+        <section class="task-form-section" aria-label="Agregar nueva tarea">
+            <form class="task-form" id="taskForm">
+                <label for="taskInput" class="visually-hidden">Nueva tarea</label>
+                <input
+                    type="text"
+                    id="taskInput"
+                    class="task-form__input"
+                    placeholder="¿Qué necesitas hacer hoy?"
+                    autocomplete="off"
+                />
+                <button type="submit" class="task-form__button" id="addTaskBtn">
+                    <span aria-hidden="true">+</span>
+                    Agregar
+                </button>
+            </form>
+        </section>
+
+        <!-- Sección de búsqueda y filtros -->
+        <section class="controls-section" aria-label="Buscar y filtrar tareas">
+            <div class="search-box">
+                <input
+                    type="search"
+                    id="searchInput"
+                    class="search-box__input"
+                    placeholder="Buscar tarea..."
+                />
+            </div>
+
+            <div class="filters" id="filters">
+                <button class="filters__button filters__button--active" data-filter="all">Todas</button>
+                <button class="filters__button" data-filter="pending">Pendientes</button>
+                <button class="filters__button" data-filter="completed">Completadas</button>
+            </div>
+        </section>
+
+        <!-- Sección con contadores de estado -->
+        <section class="stats-section" aria-label="Resumen de tareas">
+            <article class="stats-card">
+                <span class="stats-card__number" id="totalCount">0</span>
+                <span class="stats-card__label">Total</span>
+            </article>
+            <article class="stats-card">
+                <span class="stats-card__number" id="pendingCount">0</span>
+                <span class="stats-card__label">Pendientes</span>
+            </article>
+            <article class="stats-card">
+                <span class="stats-card__number" id="completedCount">0</span>
+                <span class="stats-card__label">Completadas</span>
+            </article>
+        </section>
+
+        <!-- Sección donde se renderiza la lista de tareas -->
+        <section class="task-list-section" aria-label="Lista de tareas">
+            <ul class="task-list" id="taskList">
+                <!-- Las tareas se insertan aquí dinámicamente con JavaScript -->
+            </ul>
+
+            <!-- Mensaje que se muestra cuando no hay tareas -->
+            <p class="empty-state" id="emptyState" hidden>
+                No tienes tareas todavía. ¡Agrega la primera! 🚀
+            </p>
+        </section>
+
+        <!-- Botón para eliminar todas las tareas -->
+        <section class="clear-section" aria-label="Eliminar todas las tareas">
+            <button class="clear-button" id="clearAllBtn">Eliminar todas las tareas</button>
+        </section>
+
+    </main>
+
+    <!-- ===================================================== -->
+    <!-- FOOTER: créditos                                         -->
+    <!-- ===================================================== -->
+    <footer class="app-footer">
+        <p>Desarrollado por <strong>Tu Nombre</strong> · Proyecto de portafolio 2026</p>
+    </footer>
+
+    <!-- Script principal -->
+    <script src="./assets/js/script.js" defer></script>
+</body>
+</html>
