@@ -1,0 +1,242 @@
+/* =====================================================
+   RESET
+   Normaliza estilos por defecto del navegador
+===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Evita que los inputs y botones hereden fuentes raras del navegador */
+input,
+button {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+/* Quita los estilos por defecto de las listas */
+ul {
+    list-style: none;
+}
+
+/* =====================================================
+   VARIABLES
+   Centralizamos colores, espacios, sombras y transiciones.
+   Cambiar un valor aquí actualiza toda la app: es la base
+   de un CSS mantenible.
+===================================================== */
+:root {
+    /* --- Colores principales --- */
+    --color-primary: #6366f1;        /* Indigo: color de marca */
+    --color-primary-hover: #4f46e5;  /* Un tono más oscuro para hover */
+    --color-primary-light: #eef2ff;  /* Fondo suave para acentos */
+
+    --color-success: #22c55e;        /* Verde: tareas completadas */
+    --color-danger: #ef4444;         /* Rojo: eliminar / peligro */
+    --color-danger-hover: #dc2626;
+
+    /* --- Fondo y superficies --- */
+    --color-bg: #f4f5fb;             /* Fondo general de la página */
+    --color-surface: #ffffff;        /* Tarjetas / paneles */
+    --color-border: #e5e7eb;         /* Bordes sutiles */
+
+    /* --- Textos --- */
+    --color-text-primary: #1f2937;   /* Texto principal, casi negro */
+    --color-text-secondary: #6b7280; /* Texto secundario, gris */
+    --color-text-inverse: #ffffff;   /* Texto sobre fondos oscuros */
+
+    /* --- Tipografía --- */
+    --font-family-base: "Poppins", sans-serif;
+
+    /* --- Radios de borde --- */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 999px;            /* Círculos / píldoras */
+
+    /* --- Sombras suaves --- */
+    --shadow-sm: 0 1px 3px rgba(17, 24, 39, 0.06);
+    --shadow-md: 0 8px 20px rgba(17, 24, 39, 0.08);
+    --shadow-lg: 0 16px 32px rgba(17, 24, 39, 0.12);
+
+    /* --- Transiciones --- */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.25s ease;
+
+    /* --- Layout --- */
+    --max-width: 640px;              /* Ancho máximo del contenido */
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+
+    /* Flexbox: apilamos header/main/footer en columna
+       y centramos todo horizontalmente */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 40px 20px;
+    line-height: 1.5;
+}
+
+/* Contenedor principal: todas las secciones se apilan en columna
+   con espacio uniforme entre ellas (Flexbox) */
+.app-main {
+    width: 100%;
+    max-width: var(--max-width);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+.app-header {
+    width: 100%;
+    max-width: var(--max-width);
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.app-header__title {
+    font-size: 2rem;
+    font-weight: 700;
+
+    /* Flexbox: alinea el icono y el texto en la misma línea,
+       centrados verticalmente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.app-header__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    font-size: 1.1rem;
+}
+
+.app-header__subtitle {
+    margin-top: 8px;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+.task-form {
+    /* Flexbox: input y botón lado a lado, el input
+       crece para ocupar todo el espacio disponible */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background-color: var(--color-surface);
+    padding: 8px 8px 8px 20px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+
+    transition: box-shadow var(--transition-base);
+}
+
+/* Sombra más marcada cuando el usuario interactúa con el formulario */
+.task-form:focus-within {
+    box-shadow: var(--shadow-lg);
+}
+
+.task-form__input {
+    flex: 1 1 auto; /* ocupa todo el espacio sobrante */
+    padding: 12px 0;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+}
+
+.task-form__input::placeholder {
+    color: var(--color-text-secondary);
+}
+
+.task-form__button {
+    flex-shrink: 0; /* nunca se encoge, aunque el input crezca */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+
+    cursor: pointer;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.task-form__button:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* Efecto sutil "presionado" al hacer clic */
+.task-form__button:active {
+    transform: scale(0.97);
+}
+
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+
+/* =====================================================
+   LISTA
+===================================================== */
+
+
+/* =====================================================
+   TAREAS
+===================================================== */
+
+
+/* =====================================================
+   FILTROS
+===================================================== */
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+
+/* Utilidad para accesibilidad: oculta visualmente sin quitar del DOM */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
