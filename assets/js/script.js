@@ -30,20 +30,22 @@ const clearAllBtn = document.getElementById('clearAllBtn');
 //=====================================
 
 /**
+ * Clave bajo la cual guardamos las tareas en LocalStorage.
+ * Usar un prefijo ('todo-app:') evita choques con otras claves
+ * si en el futuro el navegador guarda datos de otras apps/pruebas
+ * en el mismo dominio.
+ */
+const STORAGE_KEY = 'todo-app:tasks';
+
+/**
  * Arreglo que representa el "estado" de la aplicación: la fuente
  * de la verdad. Cada tarea es un objeto con esta forma:
  * { id: number, text: string, completed: boolean }
  *
- * NOTA TEMPORAL: dejamos 3 tareas de ejemplo para poder probar
- * renderTasks() en este paso. En el Paso 6 (LocalStorage) este
- * arreglo se cargará desde el navegador y estas tareas de prueba
- * desaparecerán.
+ * Empieza vacío: loadTasks() lo llena con lo que haya guardado
+ * en LocalStorage apenas cargue la página (ver sección EVENTOS).
  */
-let tasks = [
-    { id: 1, text: 'Aprender Flexbox y CSS Grid', completed: true },
-    { id: 2, text: 'Construir la lógica de la To-Do App', completed: false },
-    { id: 3, text: 'Subir el proyecto a GitHub', completed: false },
-];
+let tasks = [];
 
 /**
  * Filtro actualmente activo: 'all' | 'pending' | 'completed'.
@@ -127,6 +129,34 @@ function updateStats() {
 }
 
 /**
+ * Guarda el arreglo `tasks` completo en LocalStorage, convertido
+ * a texto JSON (LocalStorage solo puede guardar strings).
+ * Se llama automáticamente desde renderTasks(), así que nunca
+ * hace falta invocarla a mano.
+ */
+function saveTasks() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+/**
+ * Carga las tareas guardadas en LocalStorage (si existen) y las
+ * asigna a `tasks`. Se llama una sola vez, al iniciar la app.
+ */
+function loadTasks() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return; // primera visita: no hay nada guardado aún
+
+    try {
+        tasks = JSON.parse(stored);
+    } catch (error) {
+        // Si el contenido guardado está corrupto o no es JSON válido,
+        // preferimos arrancar con una lista vacía antes que romper la app.
+        console.error('No se pudieron cargar las tareas guardadas:', error);
+        tasks = [];
+    }
+}
+
+/**
  * Dibuja en el DOM la lista de tareas visible según el filtro
  * y la búsqueda actuales. Se llama cada vez que el estado cambia
  * (agregar, eliminar, editar, marcar, filtrar, buscar).
@@ -156,6 +186,13 @@ function renderTasks() {
     }
 
     updateStats();
+
+    // Guardamos en cada render: es la forma más simple de garantizar
+    // que el estado guardado nunca se desincroniza del estado en pantalla.
+    // El costo (escribir un poco más de lo estrictamente necesario, por
+    // ejemplo al solo cambiar de filtro) es insignificante para una app
+    // de este tamaño.
+    saveTasks();
 }
 
 /**
@@ -373,5 +410,8 @@ searchInput.addEventListener('input', (event) => {
 clearAllBtn.addEventListener('click', clearAllTasks);
 
 // --- Renderizado inicial ---
-// Dibuja el estado inicial (las tareas de ejemplo) apenas carga la página.
+// Dibuja el estado inicial apenas carga la página. Primero cargamos
+// lo que haya en LocalStorage (loadTasks), y luego pintamos con
+// esos datos (renderTasks).
+loadTasks();
 renderTasks();
