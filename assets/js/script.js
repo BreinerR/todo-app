@@ -234,6 +234,22 @@ function deleteTask(id) {
     );
 }
 
+/**
+ * Elimina todas las tareas, previa confirmación del usuario
+ * (para evitar borrados accidentales).
+ */
+function clearAllTasks() {
+    if (tasks.length === 0) return; // nada que borrar
+
+    const confirmed = confirm(
+        '¿Seguro que quieres eliminar todas las tareas? Esta acción no se puede deshacer.'
+    );
+    if (!confirmed) return;
+
+    tasks = [];
+    renderTasks();
+}
+
 
 //=====================================
 // EVENTOS
@@ -272,6 +288,37 @@ taskList.addEventListener('click', (event) => {
     // El botón de editar (.task-item__action-btn--edit) se conecta
     // en el próximo paso, junto con el modo de edición en línea.
 });
+
+// --- Filtros: Todas / Pendientes / Completadas ---
+// También usamos delegación de eventos, igual que con la lista de tareas.
+filtersContainer.addEventListener('click', (event) => {
+    const button = event.target.closest('.filters__button');
+    if (!button) return;
+
+    // Quitamos la clase activa de todos los botones...
+    filtersContainer
+        .querySelectorAll('.filters__button')
+        .forEach((btn) => btn.classList.remove('filters__button--active'));
+
+    // ...y se la damos solo al que el usuario acaba de presionar.
+    button.classList.add('filters__button--active');
+
+    // El valor viene del atributo data-filter="all|pending|completed"
+    // que ya definimos en el HTML del Paso 1.
+    currentFilter = button.dataset.filter;
+    renderTasks();
+});
+
+// --- Buscador ---
+// El evento 'input' se dispara con cada tecla, así el filtrado
+// se siente instantáneo mientras el usuario escribe.
+searchInput.addEventListener('input', (event) => {
+    searchTerm = event.target.value;
+    renderTasks();
+});
+
+// --- Eliminar todas las tareas ---
+clearAllBtn.addEventListener('click', clearAllTasks);
 
 // --- Renderizado inicial ---
 // Dibuja el estado inicial (las tareas de ejemplo) apenas carga la página.
