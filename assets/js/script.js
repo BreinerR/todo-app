@@ -158,15 +158,121 @@ function renderTasks() {
     updateStats();
 }
 
+/**
+ * Muestra una señal visual breve cuando el usuario intenta
+ * agregar una tarea vacía: el input "tiembla" y cambia su
+ * placeholder por un mensaje amigable durante 1.5 segundos.
+ */
+function showInputError() {
+    taskInput.classList.add('task-form__input--error');
+    taskInput.placeholder = 'Escribe algo antes de agregar...';
+
+    setTimeout(() => {
+        taskInput.classList.remove('task-form__input--error');
+        taskInput.placeholder = '¿Qué necesitas hacer hoy?';
+    }, 1500);
+}
+
+/**
+ * Agrega una nueva tarea a la lista.
+ * @param {string} text Texto ingresado por el usuario.
+ */
+function addTask(text) {
+    const trimmedText = text.trim(); // quita espacios sobrantes al inicio/final
+
+    // Validación: no permitimos tareas vacías (ni solo espacios)
+    if (trimmedText === '') {
+        showInputError();
+        return;
+    }
+
+    const newTask = {
+        id: Date.now(), // número único basado en la fecha/hora actual
+        text: trimmedText,
+        completed: false,
+    };
+
+    tasks.push(newTask);
+    renderTasks();
+}
+
+/**
+ * Alterna el estado completada/pendiente de una tarea.
+ * @param {number} id Identificador de la tarea a modificar.
+ */
+function toggleTask(id) {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return; // seguridad: si no existe, no hacemos nada
+
+    task.completed = !task.completed;
+    renderTasks();
+}
+
+/**
+ * Elimina una tarea de la lista, reproduciendo antes su animación
+ * de salida (definida en CSS con la clase .task-item--removing).
+ * @param {number} id Identificador de la tarea a eliminar.
+ */
+function deleteTask(id) {
+    // Buscamos el <li> en el DOM que corresponde a este id
+    const taskEl = taskList.querySelector(`[data-id="${id}"]`);
+    if (!taskEl) return;
+
+    // Disparamos la animación de salida (@keyframes task-out)
+    taskEl.classList.add('task-item--removing');
+
+    // Esperamos a que la animación CSS termine antes de tocar el
+    // arreglo de datos y volver a renderizar. { once: true } elimina
+    // el listener automáticamente después de ejecutarse una vez.
+    taskEl.addEventListener(
+        'animationend',
+        () => {
+            tasks = tasks.filter((t) => t.id !== id);
+            renderTasks();
+        },
+        { once: true }
+    );
+}
+
 
 //=====================================
 // EVENTOS
 //=====================================
-// Aquí conectaremos los eventos del usuario
-// (submit del formulario, clics, etc.) con las funciones.
-// (Se completa en el Paso 6: addTask, deleteTask, toggleTask, etc.)
+
+// --- Agregar tarea: al enviar el formulario ---
+taskForm.addEventListener('submit', (event) => {
+    event.preventDefault(); // evita que la página se recargue
+    addTask(taskInput.value);
+    taskInput.value = '';
+    taskInput.focus(); // el usuario puede seguir escribiendo sin volver a hacer clic
+});
+
+// --- Marcar/eliminar tarea: delegación de eventos ---
+// En vez de poner un listener en cada checkbox/botón (que además
+// no existen todavía cuando la página carga, se crean dinámicamente),
+// escuchamos los clics en el contenedor <ul> y revisamos qué
+// elemento exacto fue clickeado. Esto también funciona automáticamente
+// para tareas que se agreguen después.
+taskList.addEventListener('click', (event) => {
+    const taskEl = event.target.closest('.task-item');
+    if (!taskEl) return; // el clic no fue dentro de una tarea
+
+    const id = Number(taskEl.dataset.id);
+
+    if (event.target.classList.contains('task-item__checkbox')) {
+        toggleTask(id);
+        return;
+    }
+
+    if (event.target.closest('.task-item__action-btn--delete')) {
+        deleteTask(id);
+        return;
+    }
+
+    // El botón de editar (.task-item__action-btn--edit) se conecta
+    // en el próximo paso, junto con el modo de edición en línea.
+});
 
 // --- Renderizado inicial ---
-// Por ahora, la única "acción" es dibujar el estado inicial
-// (las 3 tareas de ejemplo) apenas carga la página.
+// Dibuja el estado inicial (las tareas de ejemplo) apenas carga la página.
 renderTasks();

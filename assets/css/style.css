@@ -201,6 +201,22 @@ body {
     transform: scale(0.97);
 }
 
+/* Estado de error: se activa por JS cuando el usuario intenta
+   agregar una tarea vacía. La animación "tiembla" brevemente. */
+.task-form__input--error::placeholder {
+    color: var(--color-danger);
+}
+
+.task-form__input--error {
+    animation: input-shake 0.4s ease;
+}
+
+@keyframes input-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+}
+
 
 /* =====================================================
    BOTONES
