@@ -138,7 +138,7 @@ todo-app/
 **Breiner Renteria**
 Estudiante de Ingeniería de Sistemas
 
-- GitHub: [@tu-usuario](https://github.com/BreinerR)
+- GitHub: [https://github.com/BreinerR]
 
 
 ---
