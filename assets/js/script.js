@@ -250,6 +250,56 @@ function clearAllTasks() {
     renderTasks();
 }
 
+/**
+ * Activa el modo de edición en línea para una tarea: reemplaza
+ * su <span> de texto por un <input> editable, y guarda el cambio
+ * al presionar Enter, al perder el foco (blur), o lo cancela con Escape.
+ * @param {HTMLLIElement} taskEl El <li> de la tarea en el DOM.
+ * @param {number} id Identificador de la tarea a editar.
+ */
+function enterEditMode(taskEl, id) {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    const textEl = taskEl.querySelector('.task-item__text');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'task-item__edit-input';
+    input.value = task.text;
+
+    textEl.replaceWith(input);
+    input.focus();
+    input.select(); // deja el texto seleccionado, listo para reescribir
+
+    // Evita que se ejecute la lógica de "guardar" dos veces
+    // (por ejemplo, si Enter dispara además el evento blur).
+    let alreadyFinished = false;
+
+    const finishEdit = (shouldSave) => {
+        if (alreadyFinished) return;
+        alreadyFinished = true;
+
+        if (shouldSave) {
+            const newText = input.value.trim();
+            // Solo guardamos si el nuevo texto no quedó vacío;
+            // si el usuario borró todo, conservamos el texto original.
+            if (newText !== '') {
+                task.text = newText;
+            }
+        }
+
+        renderTasks();
+    };
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') finishEdit(true);
+        if (event.key === 'Escape') finishEdit(false);
+    });
+
+    input.addEventListener('blur', () => finishEdit(true), { once: true });
+}
+
 
 //=====================================
 // EVENTOS
@@ -285,8 +335,10 @@ taskList.addEventListener('click', (event) => {
         return;
     }
 
-    // El botón de editar (.task-item__action-btn--edit) se conecta
-    // en el próximo paso, junto con el modo de edición en línea.
+    if (event.target.closest('.task-item__action-btn--edit')) {
+        enterEditMode(taskEl, id);
+        return;
+    }
 });
 
 // --- Filtros: Todas / Pendientes / Completadas ---

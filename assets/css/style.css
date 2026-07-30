@@ -371,6 +371,17 @@ body {
     color: var(--color-text-secondary);
 }
 
+/* --- Input de edición en línea ---
+   Ocupa el mismo lugar que .task-item__text, pero es editable */
+.task-item__edit-input {
+    flex: 1 1 auto;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--color-text-primary);
+    padding: 2px 0;
+    border-bottom: 2px solid var(--color-primary);
+}
+
 /* --- Acciones (editar / eliminar) --- */
 .task-item__actions {
     flex-shrink: 0;
